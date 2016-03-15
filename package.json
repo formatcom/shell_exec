@@ -1,0 +1,33 @@
+{
+  "name": "shell_exec",
+  "version": "0.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "static": "rm -rf public && mkdir public",
+    "browserify": "browserify --transform coffeeify --extension=coffee src/client/main.coffee --outfile public/bundle.js",
+    "jade": "jade src/client/index.jade --pretty --out public",
+    "stylus": "stylus --include-css -u nib --import nib -c src/client/stylus/main.styl -o public/style.css",
+    "build": "npm run static && npm run browserify && npm run jade && npm run stylus",
+    "start": "npm run build && coffee src/server/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vinicio Valbuena <formatcomvinicio@gmail.com> (FormatCom)",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "coffee-script": "^1.10.0",
+    "express": "^4.13.4",
+    "jquery": "^2.2.1",
+    "jquery.terminal": "^0.9.3",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "coffeeify": "^2.0.1",
+    "jade": "^1.11.0",
+    "nib": "^1.1.0",
+    "stylus": "^0.54.2"
+  }
+}
