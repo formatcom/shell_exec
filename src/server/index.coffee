@@ -1,3 +1,4 @@
+fs         = require 'fs'
 http       = require 'http'
 express    = require 'express'
 bodyParser = require 'body-parser'
@@ -21,7 +22,8 @@ io.on 'connection', (socket) ->
     _command = command.split ' '
     if _command[0] is 'cd'
       _command.shift()
-      process.chdir _command.join ' '
+      path = _command.join ' '
+      fs.access path, fs.F_OK, (err) -> if !err then process.chdir path
     else
       exec command, (error, stdout, stderr) -> socket.emit 'command:out', stdout || stderr
 
