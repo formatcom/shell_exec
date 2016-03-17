@@ -23,7 +23,10 @@ io.on 'connection', (socket) ->
     if _command[0] is 'cd'
       _command.shift()
       path = _command.join ' '
-      fs.access path, fs.F_OK, (err) -> if !err then process.chdir path
+      fs.access path, fs.F_OK, (err) ->
+        if !err
+          process.chdir path
+          socket.emit 'path', process.cwd()
     else
       exec command, (error, stdout, stderr) -> socket.emit 'command:out', stdout || stderr
 

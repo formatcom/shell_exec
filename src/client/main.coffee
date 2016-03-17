@@ -4,7 +4,6 @@ socketio = require 'socket.io-client'
 
 socket  = socketio()
 $window = jQuery window
-prompt  = 'ASYNC> '
 
 socket.term = jQuery('body').terminal (command, term) ->
 
@@ -16,13 +15,12 @@ socket.term = jQuery('body').terminal (command, term) ->
   completion: (term, command, callback) ->
     history = term.history().data()
     callback history
-
-  prompt: prompt
   login: (user, pass, callback) ->
     jQuery.post 'api/login', {user, pass}, (data) ->
       if data.response then callback socket.id
       else callback null
-  onInit: (term) -> term.set_prompt "#{term.login_name()}:#{prompt}"
+  onInit: (term) ->
+    term.set_prompt "#{term.login_name()}:ASYNC > "
 }
 
 $window.resize( () ->
@@ -31,3 +29,5 @@ $window.resize( () ->
 ).resize()
 
 socket.on 'command:out', (res) -> @term.echo res
+socket.on 'path', (path) -> @term.set_prompt "#{@term.login_name()}:ASYNC #{path} > "
+
