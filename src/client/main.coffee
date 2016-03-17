@@ -2,6 +2,13 @@ window.jQuery = require 'jquery'
 require 'jquery.terminal/js/jquery.terminal-src.js'
 socketio = require 'socket.io-client'
 
+require 'codemirror/lib/codemirror.js'
+require 'codemirror/addon/dialog/dialog.js'
+require 'codemirror/addon/search/searchcursor.js'
+require 'codemirror/mode/clike/clike.js'
+require 'codemirror/addon/edit/matchbrackets.js'
+require 'codemirror/keymap/vim.js'
+
 socket  = socketio()
 $window = jQuery window
 
@@ -59,3 +66,5 @@ handleFileSelect = (event) ->
 
 window.addEventListener 'dragover', handleDragOver, false
 window.addEventListener 'drop',     handleFileSelect, false
+
+socket.term.pause()
