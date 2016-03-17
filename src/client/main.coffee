@@ -31,3 +31,30 @@ $window.resize( () ->
 socket.on 'command:out', (res) -> @term.echo res
 socket.on 'path', (path) -> @term.set_prompt "#{@term.login_name()}:ASYNC #{path} > "
 
+handleDragOver = (event) ->
+  event.stopPropagation()
+  event.preventDefault()
+  event.dataTransfer.dropEffect = 'copy'
+
+handleFileSelect = (event) ->
+  event.stopPropagation()
+  event.preventDefault()
+  
+  file = event.dataTransfer.files[0]
+  data = new FormData()
+  data.append 'file', file
+
+  socket.term.echo "...uploading file: #{file.name}..."
+  
+  jQuery.ajax
+    url: 'api/upload'
+    type: 'POST'
+    data: data
+    cache: false
+    contentType: false
+    processData: false
+    success: (data) ->
+      socket.term.echo "...#{data.response} has been uploaded succesfully..."
+
+window.addEventListener 'dragover', handleDragOver, false
+window.addEventListener 'drop',     handleFileSelect, false

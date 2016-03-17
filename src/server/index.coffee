@@ -12,12 +12,12 @@ io     = socketio server
 port   = process.env.PORT || 57575
 
 app.use express.static 'public'
-app.use bodyParser.json()
-app.use bodyParser.urlencoded extended: true
+#app.use bodyParser.json()
+#app.use bodyParser.urlencoded extended: true
 app.use '/api', api
 
 io.on 'connection', (socket) ->
-
+  
   socket.on 'command:in', (command) ->
     _command = command.split ' '
     if _command[0] is 'cd'
