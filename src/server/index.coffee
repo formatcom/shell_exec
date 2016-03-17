@@ -26,8 +26,8 @@ io.on 'connection', (socket) ->
       fs.access path, fs.F_OK, (err) ->
         if !err
           process.chdir path
-          socket.emit 'path', process.cwd()
+          socket.emit 'command:out', {path: process.cwd()}
     else
-      exec command, (error, stdout, stderr) -> socket.emit 'command:out', stdout || stderr
+      exec command, (error, stdout, stderr) -> socket.emit 'command:out', {out: stdout || stderr}
 
 server.listen port, console.log "\nServer listening on port #{port}"

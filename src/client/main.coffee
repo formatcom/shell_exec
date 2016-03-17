@@ -28,8 +28,9 @@ $window.resize( () ->
   socket.term.innerHeight height - 50
 ).resize()
 
-socket.on 'command:out', (res) -> @term.echo res
-socket.on 'path', (path) -> @term.set_prompt "#{@term.login_name()}:ASYNC #{path} > "
+socket.on 'command:out', (res) ->
+  if res.out then @term.echo res.out
+  else if res.path then @term.set_prompt "#{@term.login_name()}:ASYNC #{res.path} > "
 
 handleDragOver = (event) ->
   event.stopPropagation()
