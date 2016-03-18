@@ -2,12 +2,24 @@ window.jQuery = require 'jquery'
 require 'jquery.terminal/js/jquery.terminal-src.js'
 socketio = require 'socket.io-client'
 
-require 'codemirror/lib/codemirror.js'
+CodeMirror = require 'codemirror/lib/codemirror.js'
 require 'codemirror/addon/dialog/dialog.js'
 require 'codemirror/addon/search/searchcursor.js'
 require 'codemirror/mode/clike/clike.js'
 require 'codemirror/addon/edit/matchbrackets.js'
 require 'codemirror/keymap/vim.js'
+
+###
+editor = document.getElementById 'vim'
+
+CodeMirror.fromTextArea editor,
+  lineNumbers: true
+  mode: 'text/x-csrc'
+  keyMap: 'vim'
+  theme: 'monokai'
+  matchBrackets: true
+  showCursorWhenSelecting: true
+###
 
 socket  = socketio()
 $window = jQuery window
@@ -23,9 +35,15 @@ socket.term = jQuery('body').terminal (command, term) ->
     history = term.history().data()
     callback history
   login: (user, pass, callback) ->
-    jQuery.post 'api/login', {user, pass}, (data) ->
-      if data.response then callback socket.id
-      else callback null
+    jQuery.ajax
+      url: 'api/login'
+      type: 'POST'
+      headers:
+        socket: socket.id
+      data: {user, pass}
+      success: (data) ->
+        if data.response then callback data.response
+        else callback null
   onInit: (term) ->
     term.set_prompt "#{term.login_name()}:ASYNC > "
 }
@@ -38,6 +56,7 @@ $window.resize( () ->
 socket.on 'command:out', (res) ->
   if res.out then @term.echo res.out
   else if res.path then @term.set_prompt "#{@term.login_name()}:ASYNC #{res.path} > "
+  else if res.exit then @term.logout()
 
 handleDragOver = (event) ->
   event.stopPropagation()
@@ -57,6 +76,9 @@ handleFileSelect = (event) ->
   jQuery.ajax
     url: 'api/upload'
     type: 'POST'
+    headers:
+      socket: socket.id
+      token: socket.term.token()
     data: data
     cache: false
     contentType: false
@@ -67,4 +89,4 @@ handleFileSelect = (event) ->
 window.addEventListener 'dragover', handleDragOver, false
 window.addEventListener 'drop',     handleFileSelect, false
 
-socket.term.pause()
+window.term = socket.term
