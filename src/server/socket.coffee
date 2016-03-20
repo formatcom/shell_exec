@@ -34,4 +34,4 @@ io.on 'connection', (socket) ->
     else
       exec command, (error, stdout, stderr) -> socket.emit 'command:out', {out: stdout || stderr}
 
-module.exports = {clients, server, io}
+module.exports = {clients, server}
